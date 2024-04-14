@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "chatbot-gradio"
+version = "0.1.0"
+description = ""
+authors = ["Ali Noroozi <aliasghar.noroozi@gmail.com>"]
+readme = "README.md"
+packages = [
+    { include = "app" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+gradio = "^4.26.0"
+openai = "^1.17.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
