@@ -12,6 +12,7 @@ packages = [
 python = "^3.11"
 gradio = "^4.26.0"
 openai = "^1.17.1"
+anthropic = "^0.25.2"
 
 
 [build-system]
