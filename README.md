@@ -12,7 +12,7 @@
 ## How to run:
 ```
 export PYTHONPATH="$PYTHONPATH:."
-poetry run python app/app.py
+poetry run python app/server.py
 ```
 The app should now be accessible at http://localhost:7860.
 
