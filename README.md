@@ -1,13 +1,15 @@
 # Chat bot with gradio interface
 
 ## Features:
-- User can select between Openai (GPT4 Turbo) and Anthropic API (Claude Opus)
+- User can select between Openai (GPT4 Turbo), Anthropic API (Claude Opus), and Llama 3
 - Employs simple in-memory history to make the llm stateful
 - Streams responses
 
 ## Environment variables
 - OPENAI_API_KEY
 - ANTHROPIC_API_KEY
+
+### For using Llama 3, you need to set up aws credentials and enable llama 3 model access in Amazon Bedrock.
 
 ## How to run:
 ```

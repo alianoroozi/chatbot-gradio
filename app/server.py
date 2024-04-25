@@ -3,18 +3,12 @@ from app.chat import ChatModelFactory
 
 
 def predict(query, history, model_type='claude', temperature=0.0):
-    messages = []
-    for human, assistant in history:
-        messages.append({"role": "user", "content": human})
-        messages.append({"role": "assistant", "content": assistant})
-    messages.append({"role": "user", "content": query})
-
     model = ChatModelFactory.create_model(model_type)
-    yield from model.stream_response(messages, temperature)
+    yield from model.stream_response(query, history, temperature)
 
 
 model_type_dropdown = gr.Dropdown(
-    choices=["claude", "openai"], 
+    choices=["claude", "openai", "llama"], 
     value="claude", 
     label="Model Type"
 )
