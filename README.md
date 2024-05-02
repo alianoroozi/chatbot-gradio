@@ -1,5 +1,7 @@
 # Chat bot with gradio interface
 
+Todo: add gemini
+
 ## Features:
 - User can select between Openai (GPT4 Turbo), Anthropic API (Claude Opus), and Llama 3
 - Employs simple in-memory history to make the llm stateful
