@@ -1,3 +1,6 @@
 OPENAI_MODEL_NAME = "gpt-4-turbo-preview"
 CLAUDE_MODEL_NAME = "claude-3-opus-20240229"
-LLAMA_MODEL_NAME = "meta.llama3-70b-instruct-v1:0"
+BEDROCK_LLAMA_MODEL_NAME = "meta.llama3-70b-instruct-v1:0"
+BEDROCK_CLAUDE_MODEL_NAME = "anthropic.claude-3-haiku-20240307-v1:0"
+BEDROCK_COMMAND_R_PLUS_MODEL_NAME = "cohere.command-r-plus-v1:0"
+BEDROCK_MISTRAL_MODEL_NAME = "mistral.mistral-large-2402-v1:0"

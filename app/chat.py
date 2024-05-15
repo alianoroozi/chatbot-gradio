@@ -63,9 +63,11 @@ class ClaudeModel(ChatModel):
                 partial_message += text
                 yield partial_message
 
-class LlamaModel(ChatModel):
-    def __init__(self):
+class BedrockModel(ChatModel):
+    def __init__(self, model_id, params):
         self.client = boto3.client(service_name='bedrock-runtime')
+        self.model_id = model_id
+        self.params = params
 
     def stream_response(self, query, history, temperature=0.0):
         prompt = ""
@@ -73,15 +75,45 @@ class LlamaModel(ChatModel):
             prompt += f"Human: {human}\n\n Assistant:{assistant}\n\n"
         prompt += f"Human: {query}\n\n"
 
-        body = {
-            "prompt": prompt,
-            "temperature": temperature,
-            "top_p": 0.9,
-            "max_gen_len": 1024,
-        }
+        body = {**self.params}
+        body["prompt"] = prompt
+        body["temperature"] = temperature
 
         response = self.client.invoke_model_with_response_stream(
-            modelId=LLAMA_MODEL_NAME, 
+            modelId=self.model_id, 
+            body=json.dumps(body)
+        )
+
+        stream = response.get('body')
+        if stream:
+            partial_message = ""
+            for event in stream:
+                chunk = event.get('chunk')
+                if chunk:
+                    data = json.loads(chunk.get('bytes').decode())
+                    text = data.get('generation', '')
+                    partial_message += text
+                    yield partial_message
+
+class ClaudeBedrockModel(BedrockModel):
+    def __init__(self, model_id, params):
+        self.client = boto3.client(service_name='bedrock-runtime')
+        self.model_id = model_id
+        self.params = params
+
+    def stream_response(self, query, history, temperature=0.0):
+        messages = []
+        for human, assistant in history:
+            messages.append({"role": "user", "content": human})
+            messages.append({"role": "assistant", "content": assistant})
+        messages.append({"role": "user", "content": query})
+
+        body = {**self.params}
+        body["messages"] = messages
+        body["temperature"] = temperature
+
+        response = self.client.invoke_model_with_response_stream(
+            modelId=self.model_id, 
             body=json.dumps(body)
         )
 
@@ -99,11 +131,35 @@ class LlamaModel(ChatModel):
 class ChatModelFactory:
     @staticmethod
     def create_model(model_type):
-        if model_type == 'openai':
+        if model_type == 'Openai':
             return OpenAIModel()
-        elif model_type == 'claude':
+        elif model_type == 'Claude':
             return ClaudeModel()
-        elif model_type == 'llama':
-            return LlamaModel()
+        elif model_type == "Bedrock Llama 3":
+            params = {
+                "top_p": 0.9,
+                "max_gen_len": 1024,
+            }
+            return BedrockModel(BEDROCK_LLAMA_MODEL_NAME, params)
+        elif model_type == "Bedrock Claude":
+            params = {
+                "anthropic_version": "bedrock-2023-05-31",
+                "max_tokens": 1000,
+            }
+            return ClaudeBedrockModel(BEDROCK_CLAUDE_MODEL_NAME, params)
+#         elif model_type == "Bedrock Command R+":
+#             {
+#   "body": "{\"chat_history\":[{\"role\":\"USER\",\"message\":\"What is an interesting new role in AI if I don't have an ML background\"},
+#   {\"role\":\"CHATBOT\",\"You could explore being a prompt engineer!\"}],
+#   \"message\":\"What are some skills I should have\"}"
+# }
+#             return BedrockModel(BEDROCK_COMMAND_R_PLUS_MODEL_NAME)
+        elif model_type == "Bedrock Mistral Large":
+            params = {
+                "max_tokens": 1024, 
+                "top_p": 0.9, 
+                "top_k": 50,
+            }
+            return BedrockModel(BEDROCK_MISTRAL_MODEL_NAME, params)
         else:
             raise ValueError("model_type must be either 'openai' or 'claude'")
