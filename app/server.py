@@ -12,7 +12,7 @@ model_type_dropdown = gr.Dropdown(
         "Claude", "Openai", "Bedrock Llama 3", "Bedrock Claude", 
         "Bedrock Command R+", "Bedrock Mistral Large"
         ], 
-    value="Claude", 
+    value="Openai", 
     label="Model Type"
 )
 temperature_slider = gr.Slider(0.0, 1.0, value=0.0, step=0.1, label="Temperature")
